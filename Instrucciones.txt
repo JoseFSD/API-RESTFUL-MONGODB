@@ -1,0 +1,86 @@
+SIGUE LA SIGUIENTE SECUENCIA DE PASOS PARA ENTENDER EL FLUJO DE CREACIÓN DEL PROYECTO
+-------------------------------------------------------------------------------------
+
+1. Nos ubicamos en el path donde queramos trabajar y escribimos el comando: "npm init"
+
+2. Seleccionamos todo YES por defecto manualmente, o escribiendo en lugar de npm init, "npm init --yes"
+
+3. Se acaba de crear nuestro package.json dentro del path de nuestro proyecto
+
+4. Instalamos express y mongoose, para ello introducimos el comando "npm instal express" o abreviado "npm i express".
+    Si lo deseamos podemos instalar ambas librerías a la vez "npm i express mongoose"
+
+5. Deberíamos tener en nuestro package.json dentro del objeto "dependencies" algo parecido a lo siguiente: 
+
+    "dependencies": {
+        "express": "^4.17.1",
+        "mongoose": "^5.13.2"
+    }
+
+6. Después de esto deberíamos poder ver nuestra carpeta node_modules con todos los paquetes necesarios para
+    comenzar nuestro proyecto
+
+7. Creamos nuestro archivo principal app.js
+
+CREANDO LA ESTRUCTURA BÁSICA DEL PROYECTO
+-----------------------------------------
+
+8. Creación de carpetas:
+    - Creamos carpeta para trabajar los modelos, de nombre models
+    - Creamos carpeta para trabajar las rutas, de nombre routes
+    - Creamos carpeta para trabajar los controladores, de nombre controllers
+    - Creamos la carpeta config, donde crearemos los archivos para la conexión con la DB
+
+    8.1. Creamos el archivo usuario_model.js y curso_model.js dentro de la carpeta models
+    8.2. Creamos el archivo usuarios.js y cursos.js dentro de la carpeta routes
+    8.3. Creamos el archivo usuarios_controller.js y cursos_controller.js dentro de la carpeta controllers
+
+9. Comenzamos a configurar nuestro app.js
+    - requerimos express y mongoose
+    - definimos el puerto de ejecución de nuestro servicio
+    - conectamos con la base de datos
+
+CREANDO TODA LA FUNCIONALIDAD DE USUARIOS
+-----------------------------------------
+
+10. Creamos los modelos para poder comenzar a crear colecciones (tablas en MySQL) y llenarlas con documentos 
+    (también llamados filas o tuplas en MySQL)
+        - usuario_model, como este archivo lo vamos a trabajar como modelo basado en un esquema de mongoDB vamos 
+        a necesitar utilizar mongoose
+
+11. Creamos nuestro archivo de ruta para usuarios, routes/usuarios_routes.js y aquí configuraremos la ruta y llamaremos 
+    al método que queremos que se ejecute desde controller/usuarios_controller.js
+
+12. Creamos los métodos con los tipos de consultas de cada ruta en nuestro controller/usuarios_controller.js
+
+13. Validamos los datos que introduce el usuario, para ello descargamos e instalamos @hapi/joi con el comando 
+    "npm i @hapi/joi", esto lo hacemos ya que necesitamos validar nombre, email y contraseña
+
+14. OJO!! recomendación seguir la documentación para revisar todo el potencial de esta librería 
+    https://hapi.dev/tutorials/validation/?lang=en_US
+
+15. Por lo general, al principio de nuestro archivo requeriremos Joi tal como indica la documentación, luego configuraremos 
+    nuestros validadores y finalmente se utilizarán para validar los datos que recibimos del usuario a través del body, query, params...
+
+CREANDO TODA LA FUNCIONALIDAD DE CURSOS
+---------------------------------------
+
+A partir de aquí la secuencia de pasos se repite, en este caso para la creación de Cursos. En este apartado he omitido 
+comentarios en el código para que se vea cómo debería quedar un código final, más limpio y ordenado
+
+16. Chequeamos los parámetros que hemos establecido para la creación de cada Cursos
+
+17. Incluimos la ruta en nuestro app.js "localhost:3000/api/cursos"
+
+18. Configuramos las rutas en el archivo routes/cursos_routes.js que serán las mismas que en usuarios_routes.js, ya que 
+    queremos poder hacer lo mismo con cursos, es decir: crear, actualizar, borrar, consultar...
+
+19. Creamos los métodos que vamos a utilizar en controllers/cursos_controller.js
+    OJO!! en este caso las búsquedas para actualizar o eliminar, se realizarán por el "_id" que asigna de forma automática 
+    mongoDB al documento en el momento de la creación del mismo
+
+AÑADIENDO SEGURIDAD A NUESTRO PROYECTO
+--------------------------------------
+
+20. 
+
