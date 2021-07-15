@@ -147,4 +147,53 @@ CONFIGURANDO NODEMON
     OJO!! Ahora, con nodemon instalado no tendrás que estar parando y arrancando el servicio, ya que cada vez que guardes un cambio en tus archivos, automáticamente nodemon 
     tirará el servicio y lo volverá a ejecutar
 
-29. Procedemos a proteger las rutas.
+29. Procedemos a proteger las rutas. Utilizamos las cabeceras (con sus keys y sus values)
+
+    Llegado a este punto, si nos vamos a postman o nuestro servicio que consuma el front, y realizamos un get a la ruta de nuestro servicio, 
+    en este caso "localhost:3000/api/usuarios" el resultado de esta búsqueda será el listado de todos los usuarios. 
+    
+    Nosotros no queremos esto, queremos que nos devuelva el resultado para el caso en el que la persona que esté logueada tenga ese permiso. 
+    
+    Por lo tanto, deberemos enviarle aparte de nuestra petición http de tipo GET el token, generado tras el inicio de sesión. De esta forma desde el lado del servidor podemos, 
+    verificar ese token y si es correcto le devolvemos los datos. 
+    
+    OJO!! el token puede ser correcto y que haya expirado, en cuyo caso no funcionaría, hay que tenerlo en cuenta.
+
+    Así que, desde postman realizaremos un get a la ruta localhost:3000/api/usuarios, además le enviaremos al servidor los siguientes datos a través de la 
+    cabecera, Headers (lo encontrarás en el mismo conjunto de pestañas donde podemos ver params o body):
+        - en el campo KEY escribiremos Authorization
+        - en el campo VALUE escribiremos nuestro token
+
+    Recuerdo que en este punto, al estar utilizando Postman, estamos simulando el lado del cliente, y a través de este Header le pasamos al servicio el token que 
+    hemos recibido después de iniciar sesión)
+
+    Ahora sí, trabajaremos en nuestro código para validar ese token antes de devolver en el request el listado de usuarios (para este caso)
+
+30. Para poder proteger nuestras rutas, vamos a crear un middleware para que verifique el acceso antes de ejecutar la petición de la ruta que nosotros queramos proteger.
+
+    Un middleware es un archivo que suele hacer de intermediario, en este caso entre la petición de nuestro cliente y nuestro servicio. El middleware verify (también lo 
+    puedes encontrar como auth), contiene un método de la librería jsonwebtoken llamado "verify" (de ahí el mismo nombre al archivo middleware). Este trabaja con 3 
+    parámetros (request, response, next), el primero y segundo ya los conocemos, reciben las peticiones y las devuelven al cliente. Next sin embargo, se encarga de 
+    indicar a nuestro código, que si el método verify es correcto, continue con la petición.
+
+    Por ejemplo, para una petición get que se encargue de listar todos nuestros usuarios, antes de listar los usuarios pasará por el middleware que verificará si 
+    nuestro token es válido. En el caso en que todo esté correcto continuará con la petición get y nos devolverá el listado de usuarios.
+
+31. Creamos nuestra carpeta de nombre "middlewares" y dentro de ella crearemos el archivo "verify.js"
+
+    Consultamos nuevamente la documentación de jsonwebtoken para consultar cómo crearlo https://www.npmjs.com/package/jsonwebtoken
+
+32. Ya creado el archivo, requerimos nuestro middleware verify a nuestros archivos de rutas que queremos proteger y desde dentro, en cada tipo de petición que queramos
+    proteger, le pasamos el verify.
+
+    Ejemplo:
+
+    requerimos:
+        const verify = require('../middlewares/verify.js);
+
+    incluimos en la rutas que deseamos el verify:
+        app.get('localhost:3000/api/usuarios/', verify, users_controller.getAllUsers);
+
+    Como se puede comprobar, en la ruta api/usuarios/, primero le indicamos que debe de ejecutar el verify, y si todo sale bien, ejecutará su función next, que le permitirá poder
+    ejecutar users_controller.getAllUsers
+
