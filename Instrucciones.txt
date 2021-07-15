@@ -197,3 +197,32 @@ CONFIGURANDO NODEMON
     Como se puede comprobar, en la ruta api/usuarios/, primero le indicamos que debe de ejecutar el verify, y si todo sale bien, ejecutará su función next, que le permitirá poder
     ejecutar users_controller.getAllUsers
 
+
+Y con todo esto, hemos finalizado nuestra API RESTful que nos permite:
+
+    Realizar un CRUD completo de Usuarios y Cursos
+    Listar Usuarios y Cursos en función de su estado
+    Realizar borrados lógicos
+    Crear un sistema de login
+
+Y además de lo anterior, bajo un critero de ordenación mas que aceptable de acuerdo al nivel de proyecto, buenas prácticas y coherencia.
+
+Hemos utilizado las siguientes librerías:
+
+    "express": "^4.17.1", para montar nuestro servicio
+    "mongoose": "^5.13.2", con la que hemos interactuado con nuestra base de datos en mongoDB
+    "nodemon": "^2.0.12", que nos permite actualizar cualquier cambio en nuestro servicio sin tener que estar tirándolo y levantándolo contínuamente
+    "@hapi/joi": "^17.1.1", que nos ha servido para validar los datos que introduce el usuario
+    "bcrypt": "^5.0.1", para encriptar contraseñas
+    "config": "^3.3.6", config nos ha servido para configurar nuestras variables de entorno por defecto, en modo de desarrollo y en modo de producción
+    "jsonwebtoken": "^8.5.1", con el que hemos creado y verificado un token
+
+
+¡¡GRACIAS!!
+-----------
+
+PD: si hay alguna aclaración que quieran hacerme estoy abierto a sugerencias.
+
+PD2: este pequeño tutorial-curso decidí hacerlo a la par que me documentaba, para mi mejor comprensión y para quien le pueda servir. 
+Me documenté principalmente a través de un curso gratuito que encontré en Udemy. Su autor es Grover Vásquez, Ingeniero, Analista Programador y 
+Especialista en Seguridad. Podéis acceder al curso a través del siguiente enlace https://www.udemy.com/course/nodejs-guia-desde-cero
