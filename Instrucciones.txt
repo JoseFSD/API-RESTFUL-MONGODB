@@ -82,5 +82,69 @@ comentarios en el código para que se vea cómo debería quedar un código final
 AÑADIENDO SEGURIDAD A NUESTRO PROYECTO
 --------------------------------------
 
-20. 
+20. Comenzamos este apartado instalando JWT (Json Web Token), bcrypt (para encriptar contraseñas), vamos a proteger los datos del usuario, proteger las rutas, 
+    también usaremos middleware de validación, crearemos un login
 
+21. Lo primero que debemos hacer es controlar qué tipo de datos devolvemos en respuestas a la petición http. Para este caso
+    revisaremos todos las "response" de los métodos que hemos creado en usuarios_controller.js
+
+22. Instalamos "npm install bcrypt" y seguimos los pasos de la documentación para aprender a usarla e implementar el código en nuestra api
+    https://www.npmjs.com/package/bcrypt
+
+23. Validación de usuarios: comprobaremos el email, si es correcto comprobaremos el password y si es correcto, entonces devolveremos el nombre y email del usuario.
+    Todo esto para comprobar que estamos verificando un logueo de forma correcta. Para ello crearemos el archivo llamado auth.js y deberemos crear toda una serie de 
+    archivos al igual que hicimos con cursos y usuarios. Añadir al app.js, crear el archivo auth_route y crear el archivo auth_controller con el método login
+
+24. Implementación del token. Desde el servidor hasta el cliente. 
+    Servicio --> auth, cliente --> Android, IOS, Web
+
+    - El cliente primero envía al servidor su usuario y contraseña para iniciar sesión
+    - Una vez validados los datos, nuestro servicio de autenticación genera un token y se lo devuelve al cliente
+    - El cliente recibe el token y lo guarda para poder utilizarlo cuando haga peticiones a nuestra apirest (get, post, put, delete)
+    - Una vez el servicio recive ese token, devuelve el recurso solicitado validado sin la necesidad de volver a iniciar sesión (este privilegio durará el periodo de tiempo que se haya configurado o hasta que se borre el token del cliente)
+
+25. "npm install jsonwebtoken"
+    https://www.npmjs.com/package/jsonwebtoken
+
+26. Antes de devolver los datos a través de la request, deberemos seguir la documentación de JSONWEBTOKEN para crear el token y devolverlo con la request
+
+CONFIGURANDO NUESTRO CONFIG, VARIABLES DE ENTORNO
+-------------------------------------------------
+
+27. Para no introducir a fuego el secreto en nuestro código, y que nadie pueda verlo, lo ideal es generar unas variables de entorno, estas variables solo se almacenarán en el 
+    servidor. Para ello instalamos "npm i config", y creamos los archivos default.json, development.json y production.json dentro de la carpeta config que habíamos creado vacía 
+    al principio.
+
+28. Para indicarle a NODE que estamos trabajando en un entorno de desarrollo y nos coja la configuración del development.json, deberemos introducir el siguiente comando
+    antes de arrancar el servicio. 
+
+        - "export NODE_ENV=development" 
+    
+    y posteriormente arrancamos nuestro servicio 
+    
+        - "node app.js" / si tienes instalado nodemon entonces sería "nodemon app.js" / o si tienes hecho el *script en el package.json "npm start"
+
+    *script --> para generar un script en el que solo tengas que escribir en consola "npm start" y arranque el servidor tienes que ir al package.json y modificar la siguiente línea
+    en función de si tienes instalado nodemon o no:
+
+        Si tienes instalado *nodemon:
+
+            "scripts": {
+                "start": "nodemon app.js"
+            },
+
+        Si no tienes instalado nodemon:
+
+            "scripts": {
+                "start": "node app.js"
+            },
+
+CONFIGURANDO NODEMON
+--------------------
+
+    *Si no tienes instalado nodemon y quieres hacerlo, "npm i nodemon" y después de instalarlo modificamos el script en el package.json tal como se indica anteriormente
+
+    OJO!! Ahora, con nodemon instalado no tendrás que estar parando y arrancando el servicio, ya que cada vez que guardes un cambio en tus archivos, automáticamente nodemon 
+    tirará el servicio y lo volverá a ejecutar
+
+29. Procedemos a proteger las rutas.

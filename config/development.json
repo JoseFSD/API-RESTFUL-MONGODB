@@ -1,0 +1,10 @@
+{
+    "nombre": "Api Rest Express - Usuarios y cursos",
+    "configDB": {
+        "HOST": "mongodb://localhost:27017/demo"
+    },
+    "configToken": {
+        "SECRET": "patatasFritasConBaconYQueso",
+        "EXPIRATION": "24h"
+    }
+}

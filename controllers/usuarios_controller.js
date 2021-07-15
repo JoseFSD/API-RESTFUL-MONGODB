@@ -1,7 +1,9 @@
-// instanciamos nuestro modelo Usuario
+// requerimos nuestro modelo Usuario
 const Usuario = require('../models/usuario_model');
-// instanciamos nuestro paquete de validadores
+// requerimos nuestra librería de validadores
 const Joi = require('@hapi/joi');
+// requerimos nuestra librería de encriptado
+const bcrypt = require('bcrypt');
 
 /*
     CONFIGURANDO VALIDADORES CON JOI 
@@ -23,7 +25,8 @@ const schema = Joi.object({
 // devuelve todos los usuarios de nuestra colección Usuario
 async function todosUsuarios(req, res) {
     try {
-        const resultado = await Usuario.find();
+        const resultado = await Usuario.find()
+            .select({ nombre: 1, email: 1 }); // para que solo nos devuelva el nombre y el email (en caso contrario también nos devolvería datos sensibles como la contraseña, estamos comenzando a proteger los datos de nuestros usuarios)
 
         res.status(200).json({
             listadoUsuarios: resultado
@@ -36,7 +39,8 @@ async function todosUsuarios(req, res) {
 // devuelve todos los usuarios "activos" de nuestra colección Usuario
 async function todosUsuariosActivos(req, res) {
     try {
-        const resultado = await Usuario.find({ estado: true });
+        const resultado = await Usuario.find({ estado: true })
+            .select({ nombre: 1, email: 1 });
 
         res.status(200).json({
             listadoUsuarios: resultado
@@ -49,6 +53,18 @@ async function todosUsuariosActivos(req, res) {
 // CREAR un nuevo usuario
 async function crearUsuario(req, res) {
 
+    // comprobación de si el email ya existe (solo para la creación de usuarios)
+    Usuario.findOne({ email: req.body.email }, (err, user) => {
+        // si hay un error
+        if (err) {
+            return res.status(400).json({ error: 'Server error' });
+        }
+        // si el usuario existe
+        if (user) {
+            return res.status(400).json({ mensaje: 'Ya existe un usuario con ese email registrado' })
+        }
+    });
+
     // SEGUNDO, utilizamos nuestro validador, para el nombre y el email
     const { error, value } = schema.validate({ nombre: req.body.nombre, email: req.body.email });
 
@@ -58,13 +74,14 @@ async function crearUsuario(req, res) {
             let usuario = new Usuario({
                 email: req.body.email,
                 nombre: req.body.nombre,
-                password: req.body.password
+                password: bcrypt.hashSync(req.body.password, 10) // utilizamos la función bcrypt para encriptar la contraseña
             });
 
             const resultado = await usuario.save();
 
             res.status(200).json({
-                usuarioCreado: resultado
+                usuarioCreado: resultado.nombre,
+                email: usuario.email
             })
         } catch (err) {
             res.status(400).json({
@@ -94,7 +111,8 @@ async function actualizarUsuario(req, res) {
             }, { new: true });
 
             res.status(200).json({
-                usuarioModificado: usuario
+                usuarioModificado: usuario.nombre,
+                email: usuario.email
             })
         } catch (err) {
             res.status(400).json({
@@ -112,7 +130,8 @@ async function eliminarUsuario(req, res) {
         let usuario = await Usuario.findOneAndDelete({ email: req.params.email });
 
         res.status(200).json({
-            usuarioEliminado: usuario
+            usuarioEliminado: usuario.nombre,
+            email: usuario.email
         })
     } catch (err) {
         res.status(400).json({
@@ -131,7 +150,7 @@ async function desactivarUsuario(req, res) {
         }, { new: true });
 
         res.status(200).json({
-            usuarioDesactivado: usuario
+            usuarioDesactivado: usuario.nombre
         })
     } catch (err) {
         res.status(400).json({
@@ -150,7 +169,7 @@ async function activarUsuario(req, res) {
         }, { new: true });
 
         res.status(200).json({
-            usuarioActivado: usuario
+            usuarioActivado: usuario.nombre
         })
     } catch (err) {
         res.status(400).json({

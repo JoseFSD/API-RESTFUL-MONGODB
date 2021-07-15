@@ -7,8 +7,9 @@ const mongoose = require('mongoose');
 */
 const usuarioSchema = new mongoose.Schema({
     email: {
-        type: String,
-        required: true
+        type: String, // el campo email será string
+        required: true, // el campo email será requerido para crear el usuario
+        unique: true // el campo email será único, en caso de ser repetido la DB no lo creará
     },
     nombre: {
         type: String,
@@ -19,12 +20,12 @@ const usuarioSchema = new mongoose.Schema({
         required: true
     },
     estado: {
-        type: Boolean,
-        default: true
+        type: Boolean, // el campo estado será booleano (solo admitirá true / false)
+        default: true // por defecto, en caso de no especificarlo al momento de crearlo, le será asignado true
     },
     imagen: {
         type: String,
-        required: false
+        required: false // el campo imagen no será requerido (obligatorio) en el momento de crear el usuario
     }
 });
 /*

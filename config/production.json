@@ -1,0 +1,10 @@
+{
+    "nombre": "Api Rest Express - Usuarios y cursos",
+    "configDB": {
+
+    },
+    "configToken": {
+        "SECRET": "unkdvtbj49fgjegf9v59ev6.bej6579",
+        "EXPIRATION": "2h"
+    }
+}
