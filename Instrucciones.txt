@@ -29,7 +29,8 @@ CREANDO LA ESTRUCTURA BÁSICA DEL PROYECTO
     - Creamos carpeta para trabajar los modelos, de nombre models
     - Creamos carpeta para trabajar las rutas, de nombre routes
     - Creamos carpeta para trabajar los controladores, de nombre controllers
-    - Creamos la carpeta config, donde crearemos los archivos para la conexión con la DB
+    - Creamos la carpeta config, donde crearemos los archivos para la conexión con la DB en función del tipo de entorno de
+    desarrollo en el que nos encontremos
 
     8.1. Creamos el archivo usuario_model.js y curso_model.js dentro de la carpeta models
     8.2. Creamos el archivo usuarios.js y cursos.js dentro de la carpeta routes
@@ -68,7 +69,7 @@ CREANDO TODA LA FUNCIONALIDAD DE CURSOS
 A partir de aquí la secuencia de pasos se repite, en este caso para la creación de Cursos. En este apartado he omitido 
 comentarios en el código para que se vea cómo debería quedar un código final, más limpio y ordenado
 
-16. Chequeamos los parámetros que hemos establecido para la creación de cada Cursos
+16. Chequeamos los parámetros que hemos establecido para la creación de cada Curso, hablamos del archivo models
 
 17. Incluimos la ruta en nuestro app.js "localhost:3000/api/cursos"
 
@@ -86,22 +87,26 @@ AÑADIENDO SEGURIDAD A NUESTRO PROYECTO
     también usaremos middleware de validación, crearemos un login
 
 21. Lo primero que debemos hacer es controlar qué tipo de datos devolvemos en respuestas a la petición http. Para este caso
-    revisaremos todos las "response" de los métodos que hemos creado en usuarios_controller.js
+    revisaremos todos las "response" de los métodos que hemos creado en usuarios_controller.js, no queremos devolver todos los datos del usuario 
+    (en los que va incluida la contraseña)
 
 22. Instalamos "npm install bcrypt" y seguimos los pasos de la documentación para aprender a usarla e implementar el código en nuestra api
-    https://www.npmjs.com/package/bcrypt
+    https://www.npmjs.com/package/bcrypt con esta librería procederemos al encriptado de la contraseña
 
 23. Validación de usuarios: comprobaremos el email, si es correcto comprobaremos el password y si es correcto, entonces devolveremos el nombre y email del usuario.
+    El resto de datos no, no queremos devolver la contraseña por ejemplo, ya que podría ser interceptada esta conexión y quedar información sensible accesible a "personas malas".
     Todo esto para comprobar que estamos verificando un logueo de forma correcta. Para ello crearemos el archivo llamado auth.js y deberemos crear toda una serie de 
-    archivos al igual que hicimos con cursos y usuarios. Añadir al app.js, crear el archivo auth_route y crear el archivo auth_controller con el método login
+    archivos al igual que hicimos con cursos y usuarios. Añadir al app.js, el archivo auth_route y crear el archivo auth_controller con el método login
 
 24. Implementación del token. Desde el servidor hasta el cliente. 
     Servicio --> auth, cliente --> Android, IOS, Web
 
-    - El cliente primero envía al servidor su usuario y contraseña para iniciar sesión
-    - Una vez validados los datos, nuestro servicio de autenticación genera un token y se lo devuelve al cliente
-    - El cliente recibe el token y lo guarda para poder utilizarlo cuando haga peticiones a nuestra apirest (get, post, put, delete)
-    - Una vez el servicio recive ese token, devuelve el recurso solicitado validado sin la necesidad de volver a iniciar sesión (este privilegio durará el periodo de tiempo que se haya configurado o hasta que se borre el token del cliente)
+º   Flujo del TOKEN:
+    1) El cliente primero envía al servidor su usuario y contraseña para iniciar sesión
+    2) Una vez validados los datos, nuestro servicio de autenticación genera un token y se lo devuelve al cliente
+    3) El cliente recibe el token y lo guarda para poder utilizarlo cuando haga peticiones a nuestra apirest (get, post, put, delete)
+    4) Una vez el servicio recive ese token a través de una petición, devuelve el recurso solicitado validado sin la necesidad de 
+    volver a iniciar sesión (este privilegio durará el periodo de tiempo que se haya configurado o hasta que se borre el token del cliente)
 
 25. "npm install jsonwebtoken"
     https://www.npmjs.com/package/jsonwebtoken
@@ -145,9 +150,9 @@ CONFIGURANDO NODEMON
     *Si no tienes instalado nodemon y quieres hacerlo, "npm i nodemon" y después de instalarlo modificamos el script en el package.json tal como se indica anteriormente
 
     OJO!! Ahora, con nodemon instalado no tendrás que estar parando y arrancando el servicio, ya que cada vez que guardes un cambio en tus archivos, automáticamente nodemon 
-    tirará el servicio y lo volverá a ejecutar
+    tirará el servicio y lo volverá a ejecutar de forma automática
 
-29. Procedemos a proteger las rutas. Utilizamos las cabeceras (con sus keys y sus values)
+29. Procedemos a proteger las rutas. Utilizamos las cabeceras "Headers"
 
     Llegado a este punto, si nos vamos a postman o nuestro servicio que consuma el front, y realizamos un get a la ruta de nuestro servicio, 
     en este caso "localhost:3000/api/usuarios" el resultado de esta búsqueda será el listado de todos los usuarios. 
@@ -161,10 +166,10 @@ CONFIGURANDO NODEMON
 
     Así que, desde postman realizaremos un get a la ruta localhost:3000/api/usuarios, además le enviaremos al servidor los siguientes datos a través de la 
     cabecera, Headers (lo encontrarás en el mismo conjunto de pestañas donde podemos ver params o body):
-        - en el campo KEY escribiremos Authorization
+        - en el campo KEY escribiremos authorization
         - en el campo VALUE escribiremos nuestro token
 
-    Recuerdo que en este punto, al estar utilizando Postman, estamos simulando el lado del cliente, y a través de este Header le pasamos al servicio el token que 
+    Recuerda que en este punto, al estar utilizando Postman, estamos simulando el lado del cliente, y a través de este Header le pasamos al servicio el token que 
     hemos recibido después de iniciar sesión)
 
     Ahora sí, trabajaremos en nuestro código para validar ese token antes de devolver en el request el listado de usuarios (para este caso)
@@ -177,7 +182,7 @@ CONFIGURANDO NODEMON
     indicar a nuestro código, que si el método verify es correcto, continue con la petición.
 
     Por ejemplo, para una petición get que se encargue de listar todos nuestros usuarios, antes de listar los usuarios pasará por el middleware que verificará si 
-    nuestro token es válido. En el caso en que todo esté correcto continuará con la petición get y nos devolverá el listado de usuarios.
+    nuestro token es válido. En el caso en que todo esté correcto, se ejecuta "next" y continuará con la petición get y nos devolverá el listado de usuarios.
 
 31. Creamos nuestra carpeta de nombre "middlewares" y dentro de ella crearemos el archivo "verify.js"
 

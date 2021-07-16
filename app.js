@@ -15,7 +15,7 @@ mongoose.connect(config.get('configDB.HOST'), {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
-    // utilizamos el control de errores (try / catch) para detectar si ha salido todo bien y en caso de 
+    // ya que mongoose.connect nos devuelve una promesa utilizamos "then / catch" para detectar si ha salido todo bien y en caso de 
     // fallo que nos muestre el error en la conexión por consola
     .then(() => console.log('Conectado a la base de datos DEMO!!'))
     .catch((err) => console.log('No se pudo conectar a la bade datos DEMO... ', err));
