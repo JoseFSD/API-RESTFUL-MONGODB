@@ -19,6 +19,9 @@ mongoose.connect(config.get('configDB.HOST'), {
     // fallo que nos muestre el error en la conexión por consola
     .then(() => console.log('Conectado a la base de datos DEMO!!'))
     .catch((err) => console.log('No se pudo conectar a la bade datos DEMO... ', err));
+// para esta versión de mongoose, nos aparece en la consola cada vez que levantamos el servicio el mensaje de DeprecationWarning
+// por utilizar ensureIndex. La consola nos sugiere utilizar useCreateIndex en su lugar y lo corregimos con la siguiente expresión
+mongoose.set('useCreateIndex', true);
 
 // por convención creamos la constante "app" que es una instancia de express
 const app = express();

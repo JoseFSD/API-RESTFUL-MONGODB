@@ -68,31 +68,26 @@ async function crearUsuario(req, res) {
     // SEGUNDO, utilizamos nuestro validador, para el nombre y el email
     const { error, value } = schema.validate({ nombre: req.body.nombre, email: req.body.email });
 
-    // TERCERO, si no hay error, continua ejecutando
-    if (!error) {
-        try {
-            let usuario = new Usuario({
-                email: req.body.email,
-                nombre: req.body.nombre,
-                password: bcrypt.hashSync(req.body.password, 10) // utilizamos la función bcrypt para encriptar la contraseña
-            });
+    // TERCERO, si hay error, muéstramelo en formato json
+    if (error) res.status(400).json({ validationError: error });
+    try {
+        let usuario = new Usuario({
+            email: req.body.email,
+            nombre: req.body.nombre,
+            password: bcrypt.hashSync(req.body.password, 10) // utilizamos la función bcrypt para encriptar la contraseña
+        });
 
-            const resultado = await usuario.save();
+        const resultado = await usuario.save();
 
-            res.status(200).json({
-                usuarioCreado: resultado.nombre,
-                email: usuario.email
-            })
-        } catch (err) {
-            res.status(400).json({
-                error: err
-            })
-        };
-        // CUARTO, si hay error, muéstramelo en formato json
-    } else {
-        res.status(400).json({ validationError: error });
-    }
-
+        res.status(200).json({
+            usuarioCreado: resultado.nombre,
+            email: usuario.email
+        })
+    } catch (err) {
+        res.status(400).json({
+            error: err
+        })
+    };
 }
 
 // ACTUALIZAR un usuario
@@ -101,27 +96,24 @@ async function actualizarUsuario(req, res) {
     // utilizamos nuestro validador, en este caso validamos el nombre y el email que recibimos a través de la URL (params)
     const { error, value } = schema.validate({ nombre: req.body.nombre, email: req.params.email });
 
-    if (!error) {
-        try {
-            let usuario = await Usuario.findOneAndUpdate({ email: req.params.email }, {
-                $set: {
-                    nombre: req.body.nombre,
-                    password: req.body.password
-                }
-            }, { new: true });
+    if (error) res.status(400).json({ validationError: error });
+    try {
+        let usuario = await Usuario.findOneAndUpdate({ email: req.params.email }, {
+            $set: {
+                nombre: req.body.nombre,
+                password: req.body.password
+            }
+        }, { new: true });
 
-            res.status(200).json({
-                usuarioModificado: usuario.nombre,
-                email: usuario.email
-            })
-        } catch (err) {
-            res.status(400).json({
-                error: err
-            })
-        };
-    } else {
-        res.status(400).json({ validationError: error });
-    }
+        res.status(200).json({
+            usuarioModificado: usuario.nombre,
+            email: usuario.email
+        })
+    } catch (err) {
+        res.status(400).json({
+            error: err
+        })
+    };
 }
 
 // ELIMINAR definitivamente un usuario de nuestra base de datos

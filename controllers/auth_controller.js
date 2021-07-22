@@ -13,7 +13,7 @@ function login(req, res) {
 
                 // generamos el token a través de su método sign y guardamos el id, nombre y email del usuario encriptados, y utilizaremos nuestro secreto (palabra guardada solo en el servidor) para encriptar
                 const token = jwt.sign({
-                    data: { _id: datos._id, nombre: datos.nombre, email: datos.email }
+                    usuario: { _id: datos._id, nombre: datos.nombre, email: datos.email }
                 }, config.get('configToken.SECRET'), { expiresIn: config.get('configToken.EXPIRATION') }); // pàra que el token expire en 24 horas
 
                 // devolvemos los datos no sensibles, id, nombre, email y el token
